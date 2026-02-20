@@ -48,6 +48,7 @@ Requires Java 21 (for MC 1.21.1) or Java 17 (for MC 1.20.1), and Gradle 8.8.
 ./gradlew :neoforge-1.21.1:runClient
 ./gradlew :fabric-1.20.1:runClient
 ./gradlew :fabric-1.21.1:runClient
+./gradlew :fabric-1.21.11:runClient
 ```
 
 ## Contributing
