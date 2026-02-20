@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "emberstextapi",
+  "version": "${version}",
+  "name": "Ember's Text API",
+  "description": "Bare-bones Fabric 1.21.11 bootstrap module",
+  "authors": ["TysonTheEmber"],
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.tysontheember.emberstextapi.fabric.EmbersTextAPIFabric"
+    ],
+    "client": [
+      "net.tysontheember.emberstextapi.fabric.EmbersTextAPIFabricClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.11",
+    "java": ">=21"
+  }
+}

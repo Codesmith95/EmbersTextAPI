@@ -1,0 +1,44 @@
+plugins {
+    id 'fabric-loom' version '1.13.3'
+}
+
+base {
+    archivesName = 'emberstextapi-fabric-1.21.11'
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    withSourcesJar()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/minimal/java']
+        }
+        resources {
+            srcDirs = ['src/minimal/resources']
+        }
+    }
+}
+
+dependencies {
+    // Minecraft & Fabric
+    minecraft "com.mojang:minecraft:1.21.11"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:0.18.4"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.property 'version', project.version
+
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    from('LICENSE') {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}
