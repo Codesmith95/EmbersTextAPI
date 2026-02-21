@@ -2,6 +2,7 @@ package net.tysontheember.emberstextapi.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -10,10 +11,13 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.tysontheember.emberstextapi.EmbersTextAPI;
+import net.tysontheember.emberstextapi.config.ModConfig;
 import net.tysontheember.emberstextapi.immersivemessages.api.ImmersiveMessage;
 import net.tysontheember.emberstextapi.immersivemessages.api.MarkupParser;
 import net.tysontheember.emberstextapi.immersivemessages.api.TextAnchor;
@@ -33,20 +37,119 @@ public class MessageCommands {
         // Register full command name
         dispatcher.register(
             Commands.literal("emberstextapi")
+                .requires(source -> source.hasPermission(2))
                 .then(testSubcommand())
                 .then(sendSubcommand())
                 .then(queueSubcommand())
                 .then(clearQueueSubcommand())
+                .then(stopQueueSubcommand())
+                .then(closeAllSubcommand())
         );
 
-        // Register short alias
+        // Register short alias with help and welcome subcommands
         dispatcher.register(
             Commands.literal("eta")
+                .requires(source -> source.hasPermission(2))
+                .executes(context -> {
+                    showHelp(context);
+                    return 1;
+                })
+                .then(Commands.literal("help")
+                    .executes(context -> {
+                        showHelp(context);
+                        return 1;
+                    })
+                )
+                .then(Commands.literal("welcome")
+                    .requires(source -> source.hasPermission(2))
+                    .then(Commands.literal("enable")
+                        .then(Commands.argument("enabled", BoolArgumentType.bool())
+                            .executes(context -> {
+                                boolean enabled = BoolArgumentType.getBool(context, "enabled");
+                                ModConfig.setWelcomeMessageEnabled(enabled);
+                                context.getSource().sendSuccess(() ->
+                                    Component.literal("Welcome message " + (enabled ? "enabled" : "disabled")),
+                                    true);
+                                return 1;
+                            })
+                        )
+                    )
+                )
                 .then(testSubcommand())
                 .then(sendSubcommand())
                 .then(queueSubcommand())
                 .then(clearQueueSubcommand())
+                .then(stopQueueSubcommand())
+                .then(closeAllSubcommand())
         );
+    }
+
+    private static void showHelp(com.mojang.brigadier.context.CommandContext<net.minecraft.commands.CommandSourceStack> context) {
+        context.getSource().sendSuccess(() -> Component.literal(""), false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("=== ")
+                .withStyle(style -> style.withColor(0xAAAAAA))
+                .append(Component.literal("EmbersTextAPI")
+                    .withStyle(style -> style.withColor(0xFFAA00).withBold(true)))
+                .append(Component.literal(" ===")
+                    .withStyle(style -> style.withColor(0xAAAAAA))),
+            false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("A powerful API for creating immersive, animated text")
+                .withStyle(style -> style.withColor(0xCCCCCC)),
+            false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("with gradients, typewriter effects, shake, fade, and more!")
+                .withStyle(style -> style.withColor(0xCCCCCC)),
+            false);
+
+        context.getSource().sendSuccess(() -> Component.literal(""), false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("Documentation & Examples: ")
+                .withStyle(style -> style.withColor(0xAAAAAA))
+                .append(Component.literal("tysontheember.dev")
+                    .withStyle(Style.EMPTY
+                        .withColor(0x55AAFF)
+                        .withUnderlined(true)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://tysontheember.dev")))),
+            false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("Join the Discord: ")
+                .withStyle(style -> style.withColor(0xAAAAAA))
+                .append(Component.literal("discord.gg/vY77wF48GV")
+                    .withStyle(Style.EMPTY
+                        .withColor(0x7289DA)
+                        .withUnderlined(true)
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://discord.gg/vY77wF48GV")))),
+            false);
+
+        context.getSource().sendSuccess(() -> Component.literal(""), false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("Commands:")
+                .withStyle(style -> style.withColor(0xFFAA00).withBold(true)),
+            false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("  /eta help")
+                .withStyle(style -> style.withColor(0x55FF55))
+                .append(Component.literal(" - Show this help message")
+                    .withStyle(style -> style.withColor(0xAAAAAA))),
+            false);
+
+        context.getSource().sendSuccess(() ->
+            Component.literal("  /eta welcome enable <true | false>")
+                .withStyle(style -> style.withColor(0x55FF55))
+                .append(Component.literal(" - Toggle welcome message (Op)")
+                    .withStyle(style -> style.withColor(0xAAAAAA))),
+            false);
+
+        context.getSource().sendSuccess(() -> Component.literal(""), false);
     }
 
     private static ArgumentBuilder<net.minecraft.commands.CommandSourceStack, ?> testSubcommand() {
@@ -160,6 +263,39 @@ public class MessageCommands {
                         }
                         return Command.SINGLE_SUCCESS;
                     })));
+    }
+
+    private static ArgumentBuilder<net.minecraft.commands.CommandSourceStack, ?> stopQueueSubcommand() {
+        return Commands.literal("stopqueue")
+            .then(Commands.argument("player", EntityArgument.players())
+                .executes(ctx -> {
+                    Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                    for (ServerPlayer target : targets) {
+                        NetworkHelper.getInstance().sendStopAllQueues(target);
+                    }
+                    return Command.SINGLE_SUCCESS;
+                })
+                .then(Commands.argument("channel", StringArgumentType.word())
+                    .executes(ctx -> {
+                        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                        String channel = StringArgumentType.getString(ctx, "channel");
+                        for (ServerPlayer target : targets) {
+                            NetworkHelper.getInstance().sendStopQueue(target, channel);
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })));
+    }
+
+    private static ArgumentBuilder<net.minecraft.commands.CommandSourceStack, ?> closeAllSubcommand() {
+        return Commands.literal("closeall")
+            .then(Commands.argument("player", EntityArgument.players())
+                .executes(ctx -> {
+                    Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                    for (ServerPlayer target : targets) {
+                        NetworkHelper.getInstance().sendStopAllQueues(target);
+                    }
+                    return Command.SINGLE_SUCCESS;
+                }));
     }
 
     private static void runTest(ServerPlayer player, int id) {

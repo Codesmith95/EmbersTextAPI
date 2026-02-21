@@ -36,19 +36,25 @@ public class MessageCommands {
         // Register full command name
         event.getDispatcher().register(
             Commands.literal("emberstextapi")
+                .requires(source -> source.hasPermission(2))
                 .then(testSubcommand())
                 .then(sendSubcommand())
                 .then(queueSubcommand())
                 .then(clearQueueSubcommand())
+                .then(stopQueueSubcommand())
+                .then(closeAllSubcommand())
         );
 
         // Register short alias
         event.getDispatcher().register(
             Commands.literal("eta")
+                .requires(source -> source.hasPermission(2))
                 .then(testSubcommand())
                 .then(sendSubcommand())
                 .then(queueSubcommand())
                 .then(clearQueueSubcommand())
+                .then(stopQueueSubcommand())
+                .then(closeAllSubcommand())
         );
     }
 
@@ -163,6 +169,39 @@ public class MessageCommands {
                         }
                         return Command.SINGLE_SUCCESS;
                     })));
+    }
+
+    private static ArgumentBuilder<net.minecraft.commands.CommandSourceStack, ?> stopQueueSubcommand() {
+        return Commands.literal("stopqueue")
+            .then(Commands.argument("player", EntityArgument.players())
+                .executes(ctx -> {
+                    Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                    for (ServerPlayer target : targets) {
+                        NetworkHelper.getInstance().sendStopAllQueues(target);
+                    }
+                    return Command.SINGLE_SUCCESS;
+                })
+                .then(Commands.argument("channel", StringArgumentType.word())
+                    .executes(ctx -> {
+                        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                        String channel = StringArgumentType.getString(ctx, "channel");
+                        for (ServerPlayer target : targets) {
+                            NetworkHelper.getInstance().sendStopQueue(target, channel);
+                        }
+                        return Command.SINGLE_SUCCESS;
+                    })));
+    }
+
+    private static ArgumentBuilder<net.minecraft.commands.CommandSourceStack, ?> closeAllSubcommand() {
+        return Commands.literal("closeall")
+            .then(Commands.argument("player", EntityArgument.players())
+                .executes(ctx -> {
+                    Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "player");
+                    for (ServerPlayer target : targets) {
+                        NetworkHelper.getInstance().sendStopAllQueues(target);
+                    }
+                    return Command.SINGLE_SUCCESS;
+                }));
     }
 
     private static void runTest(ServerPlayer player, int id) {
