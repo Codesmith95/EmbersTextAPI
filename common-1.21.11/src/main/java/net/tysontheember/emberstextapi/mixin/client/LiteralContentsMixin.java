@@ -154,7 +154,7 @@ public abstract class LiteralContentsMixin {
         // This prevents tooltip hover from resetting chat typewriters
         TypewriterEffect track = null;
         if (hasTypewriter) {
-            track = TypewriterTracks.getInstance().get(text.intern());
+            track = TypewriterEffect.getInstance().get(text.intern());
 
             // Calculate total character count for play completion detection
             int totalChars = 0;

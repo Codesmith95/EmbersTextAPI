@@ -1,6 +1,7 @@
 package net.tysontheember.emberstextapi.network.fabric.packets;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -32,8 +33,6 @@ public class FabricClientPacketHandlers {
                 }
             });
         });
-        // My turn -Codesmith95
-        ClientPlayNetworking.registerGlobalReceiver()
 
         // Update message packet
         ClientPlayNetworking.registerGlobalReceiver(FabricNetworkHandler.UpdateMessagePayload.TYPE, (payload, context) -> {
@@ -65,7 +64,7 @@ public class FabricClientPacketHandlers {
                 List<QueueStep> steps = new ArrayList<>();
                 for (int s = 0; s < payload.ids().size(); s++) {
                     List<UUID> stepIds = payload.ids().get(s);
-                    List<net.minecraft.nbt.CompoundTag> stepNbts = payload.stepData().get(s);
+                    List<CompoundTag> stepNbts = payload.stepData().get(s);
                     List<QueuedMessage> messages = new ArrayList<>();
                     for (int m = 0; m < stepIds.size(); m++) {
                         ImmersiveMessage msg = ImmersiveMessage.fromNbt(stepNbts.get(m));

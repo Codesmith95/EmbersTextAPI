@@ -3,13 +3,19 @@ package net.tysontheember.emberstextapi.mixin.client;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.gui.font.glyphs.BakedGlyph;
 import net.minecraft.client.gui.font.glyphs.EmptyGlyph;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.tysontheember.emberstextapi.accessor.ETABakedGlyph;
 import net.tysontheember.emberstextapi.accessor.ETAStyle;
 import net.tysontheember.emberstextapi.immersivemessages.effects.Effect;
@@ -18,6 +24,8 @@ import net.tysontheember.emberstextapi.immersivemessages.effects.animation.Typew
 import net.tysontheember.emberstextapi.typewriter.TypewriterTrack;
 import net.tysontheember.emberstextapi.util.EffectUtil;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Final;
@@ -403,20 +411,20 @@ public abstract class StringRenderOutputMixin {
     private void emberstextapi$renderItem(ETAStyle etaStyle, String itemId) {
         try {
             // Parse item ID
-            net.minecraft.resources.ResourceLocation itemLocation = net.minecraft.resources.ResourceLocation.tryParse(itemId);
+            ResourceLocation itemLocation = ResourceLocation.tryParse(itemId);
             if (itemLocation == null) {
                 return;
             }
 
             // Get the item from registry (MC 1.21.1: use BuiltInRegistries)
-            net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(itemLocation);
+            Item item = BuiltInRegistries.ITEM.get(itemLocation);
             if (item == null) {
                 return;
             }
 
             // Create item stack
             int count = etaStyle.emberstextapi$getItemCount() != null ? etaStyle.emberstextapi$getItemCount() : 1;
-            net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(item, count);
+            ItemStack stack = new ItemStack(item, count);
 
             // Get offsets - default -4, -4 for best visual alignment
             float offsetX = etaStyle.emberstextapi$getItemOffsetX() != null ? etaStyle.emberstextapi$getItemOffsetX() : -4.0f;
@@ -426,31 +434,31 @@ public abstract class StringRenderOutputMixin {
             int itemSize = 16;
 
             // Translate to item position
-            Matrix4f itemPose = new Matrix4f(this.pose);
-            itemPose.translate(this.x + offsetX, this.y + offsetY, 0);
+            Quaternionf itemPose = new Quaternionf((Quaternionfc) this.pose);
+            itemPose.transform(this.x + offsetX, this.y + offsetY, 0);
 
             // Render the item using GuiGraphics-like rendering
             // Since we're in the middle of text rendering, we need to be careful
             // We'll use the MultiBufferSource to ensure proper rendering order
-            var mc = net.minecraft.client.Minecraft.getInstance();
+            var mc = Minecraft.getInstance();
 
             // End current batch to ensure items render on top of text (if possible)
-            if (this.bufferSource instanceof net.minecraft.client.renderer.MultiBufferSource.BufferSource bs) {
+            if (this.bufferSource instanceof MultiBufferSource.BufferSource bs) {
                 bs.endBatch();
             }
 
             // Create a temporary GuiGraphics for item rendering
             // This is needed because ItemRenderer expects to work with GuiGraphics
             // We need to get or create a BufferSource
-            net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource;
-            if (this.bufferSource instanceof net.minecraft.client.renderer.MultiBufferSource.BufferSource bs) {
+            MultiBufferSource.BufferSource bufferSource;
+            if (this.bufferSource instanceof MultiBufferSource.BufferSource bs) {
                 bufferSource = bs;
             } else {
                 // Fallback: use render buffers from Minecraft instance
                 bufferSource = mc.renderBuffers().bufferSource();
             }
 
-            var guiGraphics = new net.minecraft.client.gui.GuiGraphics(mc, bufferSource);
+            var guiGraphics = new GuiGraphics(mc, bufferSource);
             // MC 1.21.1: mulPoseMatrix() renamed to mulPose()
             guiGraphics.pose().mulPose(itemPose);
 
@@ -518,7 +526,7 @@ public abstract class StringRenderOutputMixin {
             // Create GuiGraphics for entity rendering
             var guiGraphics = new net.minecraft.client.gui.GuiGraphics(mc, bufferSource);
             // MC 1.21.1: mulPoseMatrix() renamed to mulPose()
-            guiGraphics.pose().mulPose(this.pose);
+            guiGraphics.pose().mulPose((Quaternionfc) this.pose);
 
             // Render the entity using our EntityRenderer utility
             int renderedWidth = net.tysontheember.emberstextapi.immersivemessages.util.EntityRenderer.render(
