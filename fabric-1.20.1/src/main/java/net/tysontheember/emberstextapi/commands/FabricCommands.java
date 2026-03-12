@@ -19,15 +19,19 @@ public class FabricCommands {
             // Register full command name
             dispatcher.register(
                 Commands.literal("emberstextapi")
+                    .requires(source -> source.hasPermission(2))
                     .then(FabricMessageCommands.testSubcommand())
                     .then(FabricMessageCommands.sendSubcommand())
                     .then(FabricMessageCommands.queueSubcommand())
                     .then(FabricMessageCommands.clearQueueSubcommand())
+                    .then(FabricMessageCommands.stopQueueSubcommand())
+                    .then(FabricMessageCommands.closeAllSubcommand())
             );
 
             // Register short alias with all subcommands
             dispatcher.register(
                 Commands.literal("eta")
+                    .requires(source -> source.hasPermission(2))
                     .executes(context -> {
                         showHelp(context);
                         return 1;
@@ -60,6 +64,8 @@ public class FabricCommands {
                     .then(FabricMessageCommands.sendSubcommand())
                     .then(FabricMessageCommands.queueSubcommand())
                     .then(FabricMessageCommands.clearQueueSubcommand())
+                    .then(FabricMessageCommands.stopQueueSubcommand())
+                    .then(FabricMessageCommands.closeAllSubcommand())
             );
 
             EmbersTextAPIFabric.LOGGER.info("Registered commands");

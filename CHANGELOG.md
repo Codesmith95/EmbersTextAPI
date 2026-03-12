@@ -1,7 +1,3 @@
-Set align to center by default
-Set test immersive messages to queue
-Revamped the tests(/eta test 1-33)
-Made /eta test effect immersive use the new queue system
-Fixed @a not working in eta commands
-Fixed chat transparency issues with immersive messages
-Fixed/Improved fade transition
+* Added `/eta stopqueue <player> [channel]` — like clearqueue but also immediately closes the currently-displaying message(s) for that channel
+* Added `/eta closeall <player>` — closes all messages on screen and clears all queues immediately
+* Changed `/eta clearqueue <player>` (no channel) to only clear pending steps, letting current messages finish (consistent with the per-channel behavior)
