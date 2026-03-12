@@ -59,8 +59,8 @@ public class ObfuscateAnimator {
      *
      * @param revealMask The boolean array tracking which characters are revealed
      * @param revealOrder The order in which to reveal characters
-     * @param revealIndex Current index in the reveal order (will be modified)
-     * @param progress Current progress value (accumulates over time, will be modified)
+     * @param revealIndexRef Current index in the reveal order (will be modified)
+     * @param progressRef Current progress value (accumulates over time, will be modified)
      * @param delta Frame delta for this tick
      * @param speed Characters per tick reveal speed
      * @param typewriterEnabled Whether typewriter is active

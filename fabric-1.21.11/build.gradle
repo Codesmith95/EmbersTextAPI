@@ -14,10 +14,10 @@ java {
 sourceSets {
     main {
         java {
-            srcDirs = ['src/minimal/java']
+            srcDirs = ['src/main/java']
         }
         resources {
-            srcDirs = ['src/minimal/resources']
+            srcDirs = ['src/main/resources']
         }
     }
 }

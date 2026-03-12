@@ -2,6 +2,7 @@ package net.tysontheember.emberstextapi.accessor;
 
 import com.google.common.collect.ImmutableList;
 import net.tysontheember.emberstextapi.immersivemessages.effects.Effect;
+import net.tysontheember.emberstextapi.immersivemessages.effects.animation.TypewriterEffect;
 import net.tysontheember.emberstextapi.typewriter.TypewriterTrack;
 
 /**
@@ -120,7 +121,7 @@ public interface ETAStyle {
      *
      * @return TypewriterTrack instance, or null if no typewriter effect
      */
-    TypewriterTrack emberstextapi$getTypewriterTrack();
+    TypewriterEffect emberstextapi$getTypewriterTrack();
 
     /**
      * Set the typewriter track for this style.

@@ -59,7 +59,7 @@ public class RainbowEffect extends BaseEffect {
         }
 
         // Calculate hue based on time and character index
-        // time * 0.02 * speed gives ~3 second cycle at speed=1.0
+        // time * 0.02 * speed gives ~3-second cycle at speed=1.0
         // + index * phase creates wave effect between characters
         // % 30 / 30 normalizes to 0.0-1.0 range for hue
         float hue = ((Util.getMillis() * 0.02f * speed + settings.index * phase) % 30) / 30f;
@@ -77,6 +77,6 @@ public class RainbowEffect extends BaseEffect {
     @NotNull
     @Override
     public String getName() {
-        return "rainb";
+        return "rainbow";
     }
 }

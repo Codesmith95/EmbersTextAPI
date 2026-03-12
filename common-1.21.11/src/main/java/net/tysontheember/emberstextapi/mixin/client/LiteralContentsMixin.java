@@ -9,8 +9,6 @@ import net.tysontheember.emberstextapi.immersivemessages.api.TextSpan;
 import net.tysontheember.emberstextapi.immersivemessages.effects.Effect;
 import net.tysontheember.emberstextapi.immersivemessages.effects.animation.TypewriterEffect;
 import net.tysontheember.emberstextapi.immersivemessages.effects.animation.ObfKey;
-import net.tysontheember.emberstextapi.typewriter.TypewriterTrack;
-import net.tysontheember.emberstextapi.typewriter.TypewriterTracks;
 import net.tysontheember.emberstextapi.util.StyleUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +152,7 @@ public abstract class LiteralContentsMixin {
         // Get typewriter track if any span has typewriter effect
         // Use text.intern() as key so same text always gets same track
         // This prevents tooltip hover from resetting chat typewriters
-        TypewriterTrack track = null;
+        TypewriterEffect track = null;
         if (hasTypewriter) {
             track = TypewriterTracks.getInstance().get(text.intern());
 

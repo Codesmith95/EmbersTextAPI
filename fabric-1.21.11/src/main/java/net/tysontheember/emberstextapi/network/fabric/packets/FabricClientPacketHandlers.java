@@ -1,9 +1,15 @@
 package net.tysontheember.emberstextapi.network.fabric.packets;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import net.tysontheember.emberstextapi.client.ClientMessageManager;
 import net.tysontheember.emberstextapi.client.QueueStep;
 import net.tysontheember.emberstextapi.client.QueuedMessage;
+import net.tysontheember.emberstextapi.fabric.EmbersTextAPIFabric;
 import net.tysontheember.emberstextapi.immersivemessages.api.ImmersiveMessage;
 import net.tysontheember.emberstextapi.network.fabric.FabricNetworkHandler;
 
@@ -11,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
+/*
  * Registers client-side packet handlers for Fabric 1.21.11.
  * Uses the payload-based networking API.
  */
@@ -26,6 +32,8 @@ public class FabricClientPacketHandlers {
                 }
             });
         });
+        // My turn -Codesmith95
+        ClientPlayNetworking.registerGlobalReceiver()
 
         // Update message packet
         ClientPlayNetworking.registerGlobalReceiver(FabricNetworkHandler.UpdateMessagePayload.TYPE, (payload, context) -> {

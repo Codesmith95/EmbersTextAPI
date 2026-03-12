@@ -1,5 +1,6 @@
 package net.tysontheember.emberstextapi.immersivemessages.effects;
 
+import net.tysontheember.emberstextapi.immersivemessages.effects.animation.TypewriterEffect;
 import net.tysontheember.emberstextapi.typewriter.TypewriterTrack;
 
 import java.util.ArrayList;
@@ -148,7 +149,7 @@ public class EffectSettings {
      * Null if no typewriter effect is active.
      * </p>
      */
-    public TypewriterTrack typewriterTrack;
+    public TypewriterTrack typewriterEffect;
 
     /**
      * Context key for obfuscate animation persistence (tooltip/GUI reopen).
@@ -235,7 +236,7 @@ public class EffectSettings {
         this.useRandomGlyph = false;
         this.isShadow = false;
         this.shadowOffset = DEFAULT_SHADOW_OFFSET;
-        this.typewriterTrack = null;
+        this.typewriterEffect = null;
         this.obfuscateKey = null;
         this.obfuscateStableKey = null;
         this.obfuscateTrack = null;
@@ -280,7 +281,7 @@ public class EffectSettings {
         this.useRandomGlyph = false;
         this.isShadow = isShadow;
         this.shadowOffset = DEFAULT_SHADOW_OFFSET;
-        this.typewriterTrack = null;
+        this.typewriterEffect = null;
         this.obfuscateKey = null;
         this.obfuscateStableKey = null;
         this.obfuscateTrack = null;
@@ -367,7 +368,7 @@ public class EffectSettings {
         copy.useRandomGlyph = this.useRandomGlyph;
         copy.isShadow = this.isShadow;
         copy.shadowOffset = this.shadowOffset;
-        copy.typewriterTrack = this.typewriterTrack;
+        copy.typewriterEffect = this.typewriterEffect;
         copy.obfuscateKey = this.obfuscateKey;
         copy.obfuscateStableKey = this.obfuscateStableKey;
         copy.obfuscateTrack = this.obfuscateTrack;

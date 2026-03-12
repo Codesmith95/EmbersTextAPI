@@ -14,6 +14,7 @@ import net.tysontheember.emberstextapi.accessor.ETABakedGlyph;
 import net.tysontheember.emberstextapi.accessor.ETAStyle;
 import net.tysontheember.emberstextapi.immersivemessages.effects.Effect;
 import net.tysontheember.emberstextapi.immersivemessages.effects.EffectSettings;
+import net.tysontheember.emberstextapi.immersivemessages.effects.animation.TypewriterEffect;
 import net.tysontheember.emberstextapi.typewriter.TypewriterTrack;
 import net.tysontheember.emberstextapi.util.EffectUtil;
 import org.joml.Matrix4f;

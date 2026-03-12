@@ -770,7 +770,7 @@ public class ImmersiveMessage {
         // 1.21.1: Use Component.Serializer with provider when available, fallback to plain text
         if (provider != null) {
             try {
-                tag.putString("TextJson", Component.Serializer.toJson(text, provider));
+                tag.putString("TextJson", Component.Serializer.toJson(text));
             } catch (Exception e) {
                 LOGGER.warn("Failed to serialize component with provider, falling back to getString()", e);
                 tag.putString("TextJson", text.getString());
@@ -865,7 +865,7 @@ public class ImmersiveMessage {
             String json = tag.getString("TextJson");
             if (provider != null) {
                 try {
-                    MutableComponent parsed = Component.Serializer.fromJson(json, provider);
+                    MutableComponent parsed = Component.Serializer.fromJson(json);
                     if (parsed != null) {
                         text = parsed;
                     } else {

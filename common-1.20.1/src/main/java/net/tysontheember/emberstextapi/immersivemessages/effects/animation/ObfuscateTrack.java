@@ -73,7 +73,7 @@ public class ObfuscateTrack {
         long now = System.currentTimeMillis();
         long timeSinceAccess = now - this.lastAccessMs;
 
-        // If reset delay is configured and we've exceeded it, reset
+        // If reset delay is configured, and we've exceeded it, reset
         if (this.resetDelayMs > 0 && timeSinceAccess > this.resetDelayMs) {
             resetTimers();
             // Also clear random mode state

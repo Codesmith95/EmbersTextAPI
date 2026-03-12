@@ -157,7 +157,7 @@ public class TypewriterEffect extends BaseEffect {
 
         // Get track from EffectSettings (set by StringRenderOutputMixin from Style)
         // If no track was set (e.g., ImmersiveMessage rendering), create our own
-        TypewriterTrack track = settings.typewriterTrack;
+        TypewriterTrack track = settings.typewriterEffect;
         if (track == null) {
             // Create a track keyed by this effect instance for ImmersiveMessage support
             track = TypewriterTracks.getInstance().get(this);
