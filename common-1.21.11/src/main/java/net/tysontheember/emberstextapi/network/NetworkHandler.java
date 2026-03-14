@@ -56,4 +56,6 @@ public interface NetworkHandler {
      * Clear all channel queues on the client immediately.
      */
     void sendClearAllQueues(ServerPlayer player);
+
+    void sendMessage(ServerPlayer player, ImmersiveMessage message);
 }

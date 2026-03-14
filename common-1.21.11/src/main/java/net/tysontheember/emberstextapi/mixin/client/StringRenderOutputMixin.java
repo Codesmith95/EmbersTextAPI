@@ -218,14 +218,14 @@ public abstract class StringRenderOutputMixin {
             settings.obfuscateSpanLength = etaStyle.emberstextapi$getObfuscateSpanLength();
 
             // Get typewriter data from Style if present
-            TypewriterTrack track = etaStyle.emberstextapi$getTypewriterTrack();
+            TypewriterEffect track = etaStyle.emberstextapi$getTypewriterTrack();
 
             if (track != null) {
                 // Get the typewriter index that was set during parsing
                 // This index is sequential (0, 1, 2...) and was assigned in LiteralContentsMixin
                 int typingIndex = etaStyle.emberstextapi$getTypewriterIndex();
                 settings.absoluteIndex = typingIndex >= 0 ? typingIndex : index;
-                settings.typewriterTrack = track;
+                settings.typewriterEffect = track;
                 settings.typewriterIndex = typingIndex;
             } else {
                 settings.absoluteIndex = index; // Fallback for non-typewriter effects
@@ -526,7 +526,7 @@ public abstract class StringRenderOutputMixin {
             // Create GuiGraphics for entity rendering
             var guiGraphics = new net.minecraft.client.gui.GuiGraphics(mc, bufferSource);
             // MC 1.21.1: mulPoseMatrix() renamed to mulPose()
-            guiGraphics.pose().mulPose((Quaternionfc) this.pose);
+            guiGraphics.pose().mulPose(this.pose);
 
             // Render the entity using our EntityRenderer utility
             int renderedWidth = net.tysontheember.emberstextapi.immersivemessages.util.EntityRenderer.render(
