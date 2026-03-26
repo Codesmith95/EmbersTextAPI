@@ -4,6 +4,10 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
+repositories {
+    flatDir { dirs 'libs' }
+}
+
 base {
     archivesName = 'emberstextapi-forge-1.20.1'
 }
@@ -58,6 +62,8 @@ minecraft {
     }
 }
 
+jarJar.enable()
+
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 // Add common source sets directly
@@ -86,6 +92,17 @@ dependencies {
     // Caffeine (runtime)
     runtimeOnly 'com.github.ben-manes.caffeine:caffeine:3.1.8'
 
+    // LWJGL FreeType for SDF font rendering
+    // lwjgl-freetype 3.3.3 requires Configuration.FREETYPE_LIBRARY_NAME from LWJGL core 3.3.3+.
+    // MC 1.20.1 ships LWJGL 3.3.1 which lacks this field, so we force-upgrade LWJGL core to 3.3.3
+    // (backward compatible). minecraftLibrary makes these visible to Forge's TransformingClassLoader.
+    minecraftLibrary("org.lwjgl:lwjgl-freetype:3.3.3") { transitive = false }
+    minecraftLibrary("org.lwjgl:lwjgl-freetype:3.3.3:natives-linux") { transitive = false }
+    minecraftLibrary("org.lwjgl:lwjgl-freetype:3.3.3:natives-windows") { transitive = false }
+    minecraftLibrary("org.lwjgl:lwjgl-freetype:3.3.3:natives-macos-arm64") { transitive = false }
+    // JarJar embeds these in the production mod JAR
+    jarJar(group: 'org.lwjgl', name: 'lwjgl-freetype', version: '[3.3.3,3.3.4)') { transitive = false }
+
     // Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.3'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
@@ -95,6 +112,9 @@ dependencies {
     implementation fg.deobf("curse.maven:ftb-library-forge-404465:6807424")
     implementation fg.deobf("curse.maven:ftb-teams-forge-404468:6130786")
     implementation fg.deobf("curse.maven:ftb-quests-forge-289412:6829212")
+
+    // Emojiful for compat testing (runtime only — JAR in libs/, resolved via flatDir repo)
+    runtimeOnly fg.deobf('emojiful:Emojiful-Forge-1.20.1:4.2.0')
 }
 
 mixin {
